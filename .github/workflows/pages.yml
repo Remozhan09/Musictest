@@ -1,0 +1,63 @@
+name: Найти видео и опубликовать сайт
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Установить yt-dlp
+        run: pip install -U yt-dlp requests
+
+      - name: Собрать список групп из data/*.txt
+        run: python scripts/build_bands.py
+
+      - name: Найти ролики на YouTube
+        env:
+          BUDGET_MIN: "300"
+          WORKERS: "6"
+        run: python scripts/fetch_videos.py
+
+      - name: Сохранить bands.json и videos.json в репозиторий
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+          git add site/videos.json site/bands.json
+          git diff --cached --quiet || (git commit -m "Обновить список групп и ID роликов" && git pull --rebase && git push)
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

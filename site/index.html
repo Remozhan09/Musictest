@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Битва групп: эмо · скримо · металкор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--panel:#171a22;--line:#262b38;--text:#eef1f7;--muted:#9aa3b5;--acc:#ff4d6d;--acc2:#ffd166;--ok:#3ddc97}
+*{box-sizing:border-box}
+html,body{margin:0;color:var(--text);font-family:Inter,system-ui,sans-serif}
+body{min-height:100vh;background:transparent}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:radial-gradient(1200px 600px at 15% -10%,#5b1030 0%,transparent 60%),radial-gradient(900px 500px at 100% 0%,#24124d 0%,transparent 55%),#0b0b10}
+body::after{content:'';position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(10,12,16,.25),rgba(10,12,16,.55))}
+.hero{height:12vh;min-height:60px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+h1{text-shadow:0 2px 16px rgba(0,0,0,.8);font-family:'Russo One',sans-serif;font-size:clamp(26px,6vw,46px);margin:8px 0 4px;letter-spacing:.5px}
+h1 span{color:var(--acc)}
+.sub{text-shadow:0 1px 8px #000;color:#d6dbe6;margin:0 0 18px}
+.panel{background:rgba(23,26,34,.82);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.panel h3{margin:0 0 10px;font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#1e2230;color:var(--text);border-radius:999px;padding:9px 14px;font:600 14px Inter;cursor:pointer}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip:disabled{opacity:.35;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+select,input[type=text]{background:#1e2230;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:600 14px Inter}
+.big{display:block;width:100%;background:linear-gradient(90deg,var(--acc),#ff7a45);color:#fff;border:0;border-radius:14px;padding:16px;font:800 18px Inter;cursor:pointer;margin-top:6px}
+.btn{background:#1e2230;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 14px;font:600 14px Inter;cursor:pointer}
+.btn:disabled{opacity:.4}
+.note{color:var(--muted);font-size:13px;line-height:1.45}
+.hidden{display:none!important}
+/* match */
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.badge{background:#1e2230;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px}
+.bar{height:6px;background:#1e2230;border-radius:9px;overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0;transition:width .25s}
+.duel{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch}
+.vs{align-self:center;font-family:'Russo One';font-size:28px;color:var(--acc2)}
+.card{position:relative;border-radius:20px;overflow:hidden;min-height:330px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;cursor:pointer;border:2px solid transparent;transition:transform .12s,border-color .12s;user-select:none}
+.card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.35)}
+.card:active{transform:scale(.985)}
+.card .yr{position:absolute;top:14px;left:16px;font-family:'Russo One';font-size:54px;opacity:.28;line-height:1}
+.card .tag{position:absolute;top:16px;right:16px;font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.35)}
+.card .glyph{position:absolute;right:-20px;bottom:40px;font-family:'Russo One';font-size:180px;opacity:.08;line-height:1;pointer-events:none}
+.card h2{font-family:'Russo One';font-size:clamp(22px,3.4vw,32px);margin:0 0 6px;line-height:1.12;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.card .meta{opacity:.85;font-weight:600;margin-bottom:12px}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{color:#fff;text-decoration:none;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.18);padding:8px 12px;border-radius:10px;font-weight:700;font-size:13px}
+.links a:hover{background:rgba(0,0,0,.6)}
+.links a.sp{background:rgba(255,209,102,.92);color:#111;border-color:transparent}
+.pick{margin-top:12px;font-weight:800;font-size:14px;opacity:.9}
+.card.v{cursor:default;justify-content:flex-start;padding:0;min-height:0;height:auto}
+.card.v:hover{transform:none}
+.vbox{position:relative;width:100%;aspect-ratio:16/9;background:#000;cursor:pointer;overflow:hidden}
+.vbox img{width:100%;height:100%;object-fit:cover;display:block;opacity:.92}
+.vbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vbox .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:68px;height:48px;border-radius:14px;background:rgba(255,0,0,.9);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+.vbox .novid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-weight:700}
+.cbody{padding:14px 16px 16px}
+.cbody h2{font-size:clamp(18px,2.6vw,26px)}
+.cbody .meta{margin-bottom:10px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tabs button{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:9px;padding:6px 10px;font:700 12px Inter;cursor:pointer}
+.tabs button.on{background:#fff;color:#111}
+.pc{margin:0 0 6px;padding:0;list-style:none}
+.pc li{position:relative;padding:3px 0 3px 24px;font-size:14px;line-height:1.3}
+.pc li::before{position:absolute;left:0;top:3px}
+.pc.p li::before{content:'👍'}
+.pc.m{margin-bottom:12px}
+.pc.m li{opacity:.85}
+.pc.m li::before{content:'👎'}
+.choose{display:block;width:100%;border:0;border-radius:12px;padding:13px;font:800 16px Inter;background:#fff;color:#111;cursor:pointer}
+.choose:active{transform:scale(.98)}
+.tools{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+/* results */
+table{width:100%;border-collapse:collapse}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.8px}
+tr.gold td{background:rgba(255,209,102,.12)}
+td.pl{font-family:'Russo One';white-space:nowrap;width:70px}
+td a{color:var(--acc2);text-decoration:none;font-size:12px;white-space:nowrap}
+.champ{text-align:center;padding:22px;border-radius:20px;margin-bottom:14px}
+.champ .crown{font-size:40px}
+.champ h2{font-family:'Russo One';font-size:clamp(26px,5vw,40px);margin:6px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.same{color:var(--ok);font-weight:800}
+.btn.hard{background:#3a2f12;border-color:#7a6220;color:var(--acc2)}
+.hpanel{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:900px;width:100%;max-height:90svh;overflow:auto;padding:14px}
+.hhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:18px}
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hcol{border-radius:14px;padding:14px;display:flex;flex-direction:column}
+.hcol h4{font-family:'Russo One';font-size:20px;margin:0 0 2px;line-height:1.15}
+.hcol .yy{opacity:.75;font-weight:600;margin-bottom:10px;font-size:13px}
+.hcol ul{margin:0 0 10px;padding:0;list-style:none}
+.hcol li{padding:6px 0 6px 26px;position:relative;line-height:1.35;font-size:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.hcol li::before{position:absolute;left:2px;top:6px}
+.hcol ul.p li::before{content:'👍'}
+.hcol ul.m li::before{content:'👎'}
+.hcol .lbl{font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:.7;margin:4px 0 2px}
+.hcol .choose{margin-top:auto}
+@media (max-width:720px){.hgrid{grid-template-columns:1fr}.hcol h4{font-size:17px}}
+.keys{text-align:center;margin:12px 0 0}
+.keys b{display:inline-block;min-width:22px;padding:1px 6px;border:1px solid var(--line);border-bottom-width:3px;border-radius:6px;background:#1e2230;color:var(--text)}
+@media (hover:none){.keys{display:none}}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#222838;border:1px solid var(--line);padding:10px 16px;border-radius:12px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.overlay{position:fixed;inset:0;background:rgba(5,6,10,.82);display:flex;align-items:center;justify-content:center;padding:20px;z-index:5}
+.overlay .panel{max-width:420px;width:100%;text-align:center}
+@media (max-width:720px){
+ .wrap{padding:10px}
+ .duel{grid-template-columns:1fr;gap:8px}
+ .vs{text-align:center;font-size:20px}
+ .card{min-height:0;height:calc((100svh - 190px)/2);min-height:220px;padding:16px}
+ .card.v{height:auto}
+ .cbody{padding:10px 12px 12px}
+ .cbody .meta{display:none}
+ .pc li{font-size:13px;padding:2px 0 2px 22px}
+ .card .yr{font-size:40px}
+ .card .glyph{font-size:120px;bottom:30px}
+ .two{grid-template-columns:1fr}
+}
+.chips.small .chip{padding:7px 11px;font-size:13px}
+.trk{font-weight:700;opacity:.92;margin:-2px 0 8px;font-size:15px}
+.trk::before{content:'♪ ';opacity:.7}
+td .tr{opacity:.7;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- SETUP -->
+<section id="setup">
+ <div class="hero"></div>
+ <h1>Битва групп <span>эмо · скримо · металкор</span></h1>
+ <p class="sub">Из двух групп выбирай одну — и так до единственной лучшей. В каждой карточке — лучший трек группы. В конце — таблица твоего топа.</p>
+
+ <div class="panel" id="resumeBox" style="display:none">
+  <h3>Незаконченный турнир</h3>
+  <div class="row"><button class="btn" id="resumeBtn">Продолжить</button><button class="btn" id="dropBtn">Сбросить</button></div>
+ </div>
+
+ <div class="panel">
+  <h3>Какие группы</h3>
+  <div class="chips" id="ccChips">
+   <button class="chip on" data-v="all">Все</button>
+   <button class="chip" data-v="ru">🇷🇺 Русские и СНГ</button>
+   <button class="chip" data-v="foreign">🌍 Зарубежные</button>
+  </div>
+  <div class="chips" id="fameChips" style="margin-top:10px">
+   <button class="chip on" data-v="all">Любые</button>
+   <button class="chip" data-v="hits">Известные</button>
+   <button class="chip" data-v="odd">Андеграунд</button>
+  </div>
+  <label class="row note" style="margin-top:12px;cursor:pointer"><input type="checkbox" id="onlyVid" checked> Только группы, для которых найдено видео</label>
+ </div>
+
+ <div class="panel">
+  <h3>Жанры</h3>
+  <div class="chips small" id="genreChips"></div>
+  <p class="note" style="margin:10px 0 0" id="poolCount"></p>
+ </div>
+
+ <div class="panel">
+  <h3>Сколько групп в турнире</h3>
+  <div class="chips" id="sizeChips"></div>
+  <p class="note" style="margin:10px 0 0" id="sizeNote"></p>
+ </div>
+
+ <button class="big" id="startBtn">Начать</button>
+ <p class="note" style="margin-top:12px">Видео — клип или трек с YouTube. Выбор — кнопкой «Выбрать» под видео.</p>
+</section>
+
+<!-- MATCH -->
+<section id="match" class="hidden">
+ <div class="top">
+  <span class="badge" id="who"></span>
+  <span class="badge" id="roundLbl"></span>
+  <span class="badge" id="matchLbl"></span>
+ </div>
+ <div class="bar"><i id="barFill"></i></div>
+ <div class="duel">
+  <div class="card" id="cardA"></div>
+  <div class="vs">VS</div>
+  <div class="card" id="cardB"></div>
+ </div>
+ <p class="keys note">Клавиши: <b>Q</b> / <b>E</b> — видео слева / справа (пуск и пауза) · <b>A</b> / <b>D</b> — выбрать левую / правую · <b>F</b> — видео на весь экран</p>
+ <div class="tools">
+  <button class="btn" id="undoBtn">↶ Отменить выбор</button>
+  <button class="btn" id="quitBtn">↺ Начать заново</button>
+ </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="hidden"></section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const GENRES={emo:'Эмо',scr:'Скримо',phc:'Пост-хардкор',mc:'Металкор',dc:'Дэткор',math:'Маткор',pp:'Поп-панк',alt:'Альтернатива'};
+const CIS=new Set(['ru','ua','by','kz','md']);
+let BANDS=[],VID={};
+async function loadData(){
+ const j=u=>fetch(u,{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
+ const [raw,vid]=await Promise.all([j('bands.json'),j('videos.json')]);
+ VID=vid||{};
+ BANDS=(raw||[]).map((b,i)=>{const v=VID[b[0]]||{};return {id:i,t:b[0],track:b[1]||cleanTitle(v.t||'',b[0]),cc:b[2],g:b[3],odd:!!b[4],v:v.v||null}});
+}
+// "Band - Song (Official Video) [HD]" -> "Song"
+function cleanTitle(t,band){
+ if(!t)return '';
+ let s=t.replace(/[\[(【][^\])】]*(official|video|клип|music|lyric|audio|hd|4k|remaster|mv|visuali[sz]er|премьера)[^\])】]*[\])】]/gi,'');
+ const parts=s.split(/\s+[-–—|]\s+/);
+ if(parts.length>1){const nb=norm(band);const i=parts.findIndex(p=>norm(p).includes(nb)||nb.includes(norm(p)));if(i>=0)parts.splice(i,1);s=parts.join(' — ')}
+ if(s.toLowerCase().startsWith(band.toLowerCase()+' '))s=s.slice(band.length);
+ s=s.replace(/\b(official\s+)?(music\s+)?video\b|\blyric\s+video\b|(?<![\p{L}])клип(?![\p{L}])|\b(19|20)\d\d\b/giu,'');
+ s=s.replace(/["«»“”]/g,'').replace(/\s{2,}/g,' ').trim();
+ return s.length>70?s.slice(0,68)+'…':s;
+}
+function norm(s){return String(s).toLowerCase().replace(/ё/g,'е').replace(/[^\p{L}\p{N}]+/gu,'')}
+function flag(cc){cc=(cc==='uk'?'gb':cc).toUpperCase();return cc.length===2?String.fromCodePoint(...[...cc].map(c=>0x1F1E6+c.charCodeAt(0)-65)):''}
+const YT = q => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+const $ = id => document.getElementById(id);
+const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const SAVE='musicbattle-v1';
+
+let opt={cc:'all',fame:'all',genres:new Set(Object.keys(GENRES)),size:32,onlyVid:true};
+let S=null;
+
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function cardBg(g){const h=hash(g.t);const a=h%360,b=(a+40+(h>>9)%80)%360;return `linear-gradient(150deg,hsl(${a} 55% 30%),hsl(${b} 65% 13%))`}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function meta(g){return `${flag(g.cc)} ${GENRES[g.g]||g.g}${g.odd?' · андеграунд':''}`}
+
+// ---------- setup ----------
+function filtered(){return BANDS.filter(g=>(!opt.onlyVid||g.v)&&opt.genres.has(g.g)&&(opt.cc==='all'||(opt.cc==='ru')===CIS.has(g.cc))&&(opt.fame==='all'||(opt.fame==='hits'?!g.odd:g.odd)))}
+function chipGroup(id,key){document.querySelectorAll(`#${id} .chip`).forEach(b=>b.onclick=()=>{opt[key]=b.dataset.v;document.querySelectorAll(`#${id} .chip`).forEach(x=>x.classList.toggle('on',x===b));renderSizes()})}
+function initSetup(){
+ chipGroup('ccChips','cc');chipGroup('fameChips','fame');
+ const gc=$('genreChips');
+ Object.entries(GENRES).forEach(([k,n])=>{const cnt=BANDS.filter(b=>b.g===k).length;if(!cnt)return;const b=document.createElement('button');b.className='chip on';b.textContent=`${n} · ${cnt}`;
+  b.onclick=()=>{if(opt.genres.has(k)){if(opt.genres.size>1)opt.genres.delete(k)}else opt.genres.add(k);b.classList.toggle('on',opt.genres.has(k));renderSizes()};gc.appendChild(b)});
+ $('startBtn').onclick=start;
+ $('onlyVid').onchange=()=>{opt.onlyVid=$('onlyVid').checked;renderSizes()};
+ $('dropBtn').onclick=()=>{store.del(SAVE);$('resumeBox').style.display='none'};
+ $('resumeBtn').onclick=()=>{const s=store.get(SAVE);if(s&&s.cur){S=s;showMatch()}};
+ const saved=store.get(SAVE);
+ if(saved&&saved.cur)$('resumeBox').style.display='';
+ renderSizes();
+}
+function renderSizes(){
+ const n=filtered().length;const withV=BANDS.filter(g=>g.v).length;
+ $('poolCount').textContent=`в пуле: ${n} · с видео всего: ${withV} из ${BANDS.length}`+(withV?'':' (видео ещё ищутся — сними галочку «Только группы с видео»)');
+ const sizes=[8,16,32,64,128,256,512,1024];const box=$('sizeChips');box.innerHTML='';
+ const opts=sizes.filter(s=>s<n).concat([n]);
+ if(!opts.includes(opt.size))opt.size=opts.includes(32)?32:opts[opts.length-1];
+ opts.forEach(s=>{const b=document.createElement('button');b.className='chip'+(s===opt.size?' on':'');b.textContent=s===n?`Все (${n})`:s;b.disabled=n<2;b.onclick=()=>{opt.size=s;renderSizes()};box.appendChild(b)});
+ const m=Math.max(0,opt.size-1);$('sizeNote').textContent=`Выборов: ${m}. Примерно ${Math.max(1,Math.round(m*4/60))} мин.`+(opt.size===n&&(n&(n-1))?' Если в раунде нечётное число групп, одна проходит дальше без пары.':'');
+ $('startBtn').disabled=n<2;
+}
+
+// ---------- tournament ----------
+function start(){
+ const pool=shuffle(filtered().map(g=>g.id)).slice(0,opt.size);
+ if(pool.length<2)return;
+ S={sig:BANDS.length,initial:pool,runs:[],phase:'play',total:pool.length-1};
+ S.cur={round:1,list:pool.slice(),next:[],i:0,lost:{},picks:0,hist:[]};advanceByes();
+ showMatch();
+}
+function advanceByes(){
+ const c=S.cur;
+ while(true){
+  if(c.i>=c.list.length){
+   if(c.next.length===1){finishRun();return}
+   c.list=c.next;c.next=[];c.i=0;c.round++;continue;
+  }
+  if(c.i===c.list.length-1){c.next.push(c.list[c.i]);c.i++;continue}
+  return;
+ }
+}
+function choose(side){
+ const c=S.cur;if(!c)return;const a=c.list[c.i],b=c.list[c.i+1];
+ c.hist.push({round:c.round,list:c.list.slice(),next:c.next.slice(),i:c.i});
+ if(c.hist.length>60)c.hist.shift();
+ const w=side===0?a:b,l=side===0?b:a;
+ c.next.push(w);c.lost[l]=c.round;c.picks++;c.i+=2;
+ advanceByes();
+ if(S.phase==='play'){store.set(SAVE,S);renderMatch()}
+}
+function undo(){
+ const c=S.cur;const h=c.hist.pop();if(!h)return;
+ const a=h.list[h.i],b=h.list[h.i+1];delete c.lost[a];delete c.lost[b];
+ c.round=h.round;c.list=h.list;c.next=h.next;c.i=h.i;c.picks--;
+ store.set(SAVE,S);renderMatch();
+}
+function finishRun(){
+ const c=S.cur;S.runs.push({champ:c.next[0],lost:c.lost,rounds:c.round});
+ delete S.cur;S.phase='done';store.set(SAVE,S);showResults();
+}
+
+// ---------- render match ----------
+function show(id){['setup','match','results'].forEach(x=>$(x).classList.toggle('hidden',x!==id));window.scrollTo(0,0)}
+function showMatch(){show('match');renderMatch()}
+function roundName(left){return left===2?'Финал':left<=4?'Полуфинал':left<=8?'Четвертьфинал':`1/${Math.floor(left/2)} финала`}
+function renderMatch(){
+ const c=S.cur;if(!c)return;
+ const a=BANDS[c.list[c.i]],b=BANDS[c.list[c.i+1]];
+ const remaining=c.list.length;const inRound=Math.floor(remaining/2);const done=Math.floor(c.i/2)+1;
+ $('who').textContent=`Групп в турнире: ${S.initial.length}`;
+ $('roundLbl').textContent=roundName(remaining);
+ $('matchLbl').textContent=`Пара ${done} из ${inRound}`;
+ $('barFill').style.width=(100*c.picks/S.total)+'%';
+ vstate[0]=vstate[1]=null;lastSide=null;
+ fill($('cardA'),a,0);fill($('cardB'),b,1);
+ $('undoBtn').disabled=!c.hist.length;
+}
+function fill(el,g,side){
+ el.className='card v';el.style.background=cardBg(g);
+ el.innerHTML=`<div class="vbox"></div><div class="cbody">
+ <h2>${esc(g.t)}</h2>${g.track?`<div class="trk">${esc(g.track)}</div>`:''}
+ <div class="meta">${meta(g)}${!g.v?` · <a style="color:#fff" href="${YT(g.t+' '+(g.track||''))}" target="_blank" rel="noopener">найти на YouTube</a>`:''}</div>
+ <button class="choose">✓ Выбрать</button></div>`;
+ const vb=el.querySelector('.vbox');
+ vstate[side]=null;
+ if(!g.v){vb.dataset.vid='';vb.innerHTML=`<div class="novid"><div style="font-size:30px">🎸</div><div>${esc(g.t)}</div><div class="note" style="color:#fff">видео пока не найдено</div></div>`}
+ else{vb.innerHTML=`<img loading="lazy" alt="" src="https://i.ytimg.com/vi/${g.v}/hqdefault.jpg"><div class="play">▶</div>`;vb.onclick=()=>startVideo(side);vb.dataset.vid=g.v}
+ el.querySelector('.choose').onclick=()=>choose(side);
+}
+// ---------- видео: управление и горячие клавиши ----------
+const vstate=[null,null];
+function ifr(side){return $(side?'cardB':'cardA').querySelector('.vbox iframe')}
+function yt(f,side){const i=ifr(side);if(i&&i.contentWindow)i.contentWindow.postMessage(JSON.stringify({event:'command',func:f,args:[]}),'*')}
+function startVideo(side){
+ const vb=$(side?'cardB':'cardA').querySelector('.vbox');if(!vb||!vb.dataset.vid)return;
+ yt('pauseVideo',1-side);
+ vb.onclick=null;
+ vb.innerHTML=`<iframe src="https://www.youtube.com/embed/${vb.dataset.vid}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+ const i=vb.querySelector('iframe');vstate[side]=1;lastSide=side;
+ i.addEventListener('load',()=>{try{i.contentWindow.postMessage(JSON.stringify({event:'listening',id:side}),'*')}catch(e){}});
+}
+let lastSide=null;
+function toggleVideo(side){
+ if(!ifr(side)){startVideo(side);return}
+ if(vstate[side]===1){yt('pauseVideo',side);vstate[side]=2}
+ else{yt('pauseVideo',1-side);if(vstate[1-side]===1)vstate[1-side]=2;yt('playVideo',side);vstate[side]=1;lastSide=side}
+}
+window.addEventListener('message',e=>{
+ if(!/youtube/.test(e.origin))return;
+ let d;try{d=typeof e.data==='string'?JSON.parse(e.data):e.data}catch(x){return}
+ if(!d||!d.info||d.info.playerState===undefined)return;
+ [0,1].forEach(s=>{const i=ifr(s);if(i&&i.contentWindow===e.source){vstate[s]=d.info.playerState===1?1:2;if(d.info.playerState===1)lastSide=s}});
+});
+document.addEventListener('keydown',e=>{
+ if(e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;
+ const tag=(e.target&&e.target.tagName)||'';if(/INPUT|SELECT|TEXTAREA/.test(tag))return;
+ if($('match').classList.contains('hidden')||!S||!S.cur)return;
+ const k=e.code;
+ if(k==='KeyQ'){toggleVideo(0)}
+ else if(k==='KeyE'){toggleVideo(1)}
+ else if(k==='KeyA'){choose(0)}
+ else if(k==='KeyD'){choose(1)}
+ else if(k==='KeyF'){
+  const s=vstate[0]===1?0:vstate[1]===1?1:lastSide;const i=s===null?null:ifr(s);
+  if(i){const r=i.requestFullscreen||i.webkitRequestFullscreen;if(r)Promise.resolve(r.call(i)).catch(()=>{})}
+ } else return;
+ e.preventDefault();
+});
+window.addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement&&document.activeElement.tagName==='IFRAME'&&!document.fullscreenElement){window.focus()}},150));
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+// ---------- results ----------
+function ranking(run){
+ const R=run.rounds;const rows=[{id:run.champ,from:1,to:1}];
+ const byRound={};for(const [id,r] of Object.entries(run.lost))(byRound[r]=byRound[r]||[]).push(+id);
+ let place=2;
+ for(let r=R;r>=1;r--){const arr=byRound[r]||[];if(!arr.length)continue;for(const id of arr)rows.push({id,from:place,to:place+arr.length-1});place+=arr.length}
+ return rows;
+}
+function plTxt(r){return r.from===r.to?`${r.from}`:`${r.from}–${r.to}`}
+function table(run,limit){
+ const rows=ranking(run).slice(0,limit);
+ return `<table><tr><th>Место</th><th>Группа</th><th>Жанр</th><th></th></tr>`+rows.map((r,k)=>{const g=BANDS[r.id];return `<tr class="${k===0?'gold':''}"><td class="pl">${k===0?'🏆':plTxt(r)}</td><td>${esc(g.t)}${g.track?`<div class="tr">♪ ${esc(g.track)}</div>`:''}</td><td>${meta(g)}</td><td><a href="${g.v?'https://www.youtube.com/watch?v='+g.v:YT(g.t+' '+(g.track||''))}" target="_blank" rel="noopener">▶</a></td></tr>`}).join('')+`</table>`;
+}
+let showAll=false;
+function showResults(){
+ show('results');
+ const lim=showAll?Infinity:16;const total=S.initial.length;
+ const g=BANDS[S.runs[0].champ];
+ let h=`<div class="champ" style="background:${cardBg(g)}"><div class="crown">🏆</div><div class="note" style="color:#fff;opacity:.8">Лучшая группа из ${total}</div><h2>${esc(g.t)}</h2><div>${g.track?'♪ '+esc(g.track)+' · ':''}${meta(g)}</div></div>`;
+ h+=`<div class="panel"><h3>Ваш топ</h3>${table(S.runs[0],lim)}</div>`;
+ h+=`<div class="tools"><button class="btn" id="moreBtn">${showAll?'Показать топ-16':'Показать всю таблицу'}</button><button class="btn" id="copyBtn">Скопировать топ-10</button><button class="btn" id="againBtn">Новый турнир</button></div>`;
+ $('results').innerHTML=h;
+ $('moreBtn').onclick=()=>{showAll=!showAll;showResults()};
+ $('againBtn').onclick=()=>{showAll=false;S=null;store.del(SAVE);show('setup');$('resumeBox').style.display='none'};
+ $('copyBtn').onclick=()=>{
+  const txt=`Топ групп (из ${total}):\n`+ranking(S.runs[0]).slice(0,10).map(r=>{const b=BANDS[r.id];return `${r.from===1?'🏆':plTxt(r)}. ${b.t}${b.track?' — '+b.track:''}`}).join('\n');
+  Promise.resolve().then(()=>navigator.clipboard.writeText(txt)).then(()=>toast('Скопировано')).catch(()=>toast('Не удалось скопировать'));
+ };
+}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1600)}
+
+$('undoBtn').onclick=undo;
+let quitArm=null;
+$('quitBtn').onclick=()=>{
+ const b=$('quitBtn');
+ if(!quitArm){b.textContent='Точно сбросить? Нажми ещё раз';quitArm=setTimeout(()=>{quitArm=null;b.textContent='↺ Начать заново'},3000);return}
+ clearTimeout(quitArm);quitArm=null;b.textContent='↺ Начать заново';
+ S=null;store.del(SAVE);$('resumeBox').style.display='none';show('setup');
+};
+$('startBtn').textContent='Загрузка…';
+loadData().then(()=>{
+ $('startBtn').textContent='Начать';initSetup();
+ const s=store.get(SAVE);
+ if(s&&s.sig===BANDS.length){
+  S=s;
+  if(s.phase==='done'&&s.runs&&s.runs.length)showResults();
+  else if(s.cur)showMatch();
+ }else if(s){store.del(SAVE);$('resumeBox').style.display='none'}
+});
+</script>
+</body>
+</html>
