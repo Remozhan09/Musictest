@@ -28,6 +28,9 @@ jobs:
       - name: Установить yt-dlp
         run: pip install -U yt-dlp requests
 
+      - name: Добавить группы и топ-треки с Last.fm (если задано в data/lastfm.json)
+        run: python scripts/expand_lastfm.py
+
       - name: Собрать список групп из data/*.txt
         run: python scripts/build_bands.py
 
@@ -41,7 +44,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
-          git add site/videos.json site/bands.json
+          git add site/videos.json site/bands.json data/
           git diff --cached --quiet || (git commit -m "Обновить список групп и ID роликов" && git pull --rebase && git push)
 
       - uses: actions/configure-pages@v5

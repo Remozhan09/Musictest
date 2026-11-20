@@ -21,7 +21,7 @@ for path in sorted(glob.glob(os.path.join(ROOT, "data", "*.txt"))):
         if not line or line.startswith("#"):
             continue
         p = [x.strip() for x in line.split("|")]
-        if len(p) < 4 or p[3] not in GENRES:
+        if len(p) < 4 or p[3] not in GENRES:  # страна может быть пустой
             raise SystemExit(f"{path}:{n}: плохая строка: {line}")
         name, track, cc, genre = p[:4]
         odd = 1 if len(p) > 4 and p[4] == "*" else 0
@@ -33,6 +33,11 @@ for path in sorted(glob.glob(os.path.join(ROOT, "data", "*.txt"))):
         order.append(k)
         bands[k] = [name, track, cc, genre, odd]
 
+tr_path = os.path.join(ROOT, "data", "lastfm_tracks.json")
+lf = json.load(open(tr_path, encoding="utf-8")) if os.path.exists(tr_path) else {}
+for k in order:
+    if not bands[k][1] and lf.get(bands[k][0]):
+        bands[k][1] = lf[bands[k][0]]
 out = [bands[k] for k in order]
 json.dump(out, open(os.path.join(ROOT, "site", "bands.json"), "w", encoding="utf-8"),
           ensure_ascii=False, separators=(",", ":"))

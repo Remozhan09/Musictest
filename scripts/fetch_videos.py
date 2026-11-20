@@ -102,7 +102,15 @@ def save():
     os.replace(tmp, OUT)
 
 
-jobs = [b for b in bands if not videos.get(b[0], {}).get("v")]
+def stale(b):
+    v = videos.get(b[0], {})
+    if not v.get("v"):
+        return True
+    # трек появился позже (например, с Last.fm), а найденный ролик — про другую песню
+    return bool(b[1]) and norm(b[1]) not in norm(v.get("t", "")) and not v.get("x")
+
+
+jobs = [b for b in bands if stale(b)]
 print(f"Нужно найти: {len(jobs)}, уже есть: {len(bands) - len(jobs)}")
 found = miss = 0
 with ThreadPoolExecutor(WORKERS) as pool:
@@ -113,6 +121,8 @@ with ThreadPoolExecutor(WORKERS) as pool:
             if vid:
                 videos[band] = {"v": vid, "t": title}
                 found += 1
+            elif videos.get(band, {}).get("v"):
+                videos[band]["x"] = 1  # трек не нашёлся — оставляем прежний ролик
             else:
                 miss += 1
                 print(f"  - не найдено: {band}")
