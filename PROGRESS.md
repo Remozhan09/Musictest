@@ -24,4 +24,6 @@
 - [x] 8. scripts/expand_lastfm.py: теги last.fm (сначала русские) → кандидаты по слушателям → страница группы: топ-трек, теги (отсев рэпа/попа), страна. Пишет data/zz_lastfm.txt, data/lastfm_tracks.json (топ-треки для ручных групп без трека), data/lastfm_report.txt. Настройки data/lastfm.json
 - [x] 9. build_bands подставляет топ-треки; fetch_videos перенаходит ролик, если трек появился, а ролик про другую песню
 - [x] 10. Разбор HTML проверен на образце разметки (реальный last.fm отсюда недоступен; при сбое скрипт пишет data/lastfm_debug.html)
-- [ ] 11. Пуш → дождаться Actions, проверить отчёт и число групп/роликов
+- [x] 11. Первый запуск: 703 из 712 групп с видео, сайт опубликован. Last.fm HTML серверам GitHub не отдаётся (все теги = 0, run 44792865980)
+- [x] 12. Скрипт переписан на API Last.fm (ключ в секрете LASTFM_KEY), шаг continue-on-error; проверен на подставном API (/tmp/lf)
+- [ ] 13. Пользователь создаёт ключ last.fm/api/account/create и секрет LASTFM_KEY → Actions → Run workflow → проверить отчёт data/lastfm_report.txt

@@ -29,6 +29,9 @@ jobs:
         run: pip install -U yt-dlp requests
 
       - name: Добавить группы и топ-треки с Last.fm (если задано в data/lastfm.json)
+        continue-on-error: true
+        env:
+          LASTFM_KEY: ${{ secrets.LASTFM_KEY }}
         run: python scripts/expand_lastfm.py
 
       - name: Собрать список групп из data/*.txt
