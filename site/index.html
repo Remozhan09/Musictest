@@ -407,6 +407,15 @@ function showResults(){
   Promise.resolve().then(()=>navigator.clipboard.writeText(txt)).then(()=>toast('Скопировано')).catch(()=>toast('Не удалось скопировать'));
  };
 }
+// «прогрев»: пока выбираются настройки, в фоне грузится плеер YouTube (скрипты попадают в кэш),
+// чтобы первое видео в турнире стартовало быстрее
+function warmPlayer(){
+ const g=BANDS.find(b=>b.v);if(!g||$('warm'))return;
+ const f=document.createElement('iframe');f.id='warm';f.setAttribute('aria-hidden','true');f.tabIndex=-1;
+ f.style.cssText='position:fixed;left:-9999px;top:0;width:320px;height:180px;border:0;opacity:0;pointer-events:none';
+ f.src=`https://www.youtube.com/embed/${g.v}?autoplay=0&rel=0&playsinline=1`;
+ document.body.appendChild(f);
+}
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1600)}
 
 $('undoBtn').onclick=undo;
@@ -419,7 +428,7 @@ $('quitBtn').onclick=()=>{
 };
 $('startBtn').textContent='Загрузка…';
 loadData().then(()=>{
- $('startBtn').textContent='Начать';initSetup();
+ $('startBtn').textContent='Начать';initSetup();warmPlayer();
  const s=store.get(SAVE);
  if(s&&s.sig===BANDS.length){
   S=s;
