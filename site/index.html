@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Битва групп: эмо · скримо · металкор</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="preconnect" href="https://www.google.com">
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d0f14;--panel:#171a22;--line:#262b38;--text:#eef1f7;--muted:#9aa3b5;--acc:#ff4d6d;--acc2:#ffd166;--ok:#3ddc97}
@@ -325,32 +328,37 @@ function fill(el,g,side){
  const vb=el.querySelector('.vbox');
  vstate[side]=null;
  if(!g.v){vb.dataset.vid='';vb.innerHTML=`<div class="novid"><div style="font-size:30px">🎸</div><div>${esc(g.t)}</div><div class="note" style="color:#fff">видео пока не найдено</div></div>`}
- else{vb.innerHTML=`<img loading="lazy" alt="" src="https://i.ytimg.com/vi/${g.v}/hqdefault.jpg"><div class="play">▶</div>`;vb.onclick=()=>startVideo(side);vb.dataset.vid=g.v}
+ else{vb.dataset.vid=g.v;mountPlayer(vb,side,false)}
  el.querySelector('.choose').onclick=()=>choose(side);
 }
 // ---------- видео: управление и горячие клавиши ----------
 const vstate=[null,null];
 function ifr(side){return $(side?'cardB':'cardA').querySelector('.vbox iframe')}
 function yt(f,side){const i=ifr(side);if(i&&i.contentWindow)i.contentWindow.postMessage(JSON.stringify({event:'command',func:f,args:[]}),'*')}
+// плеер грузится сразу, как только появилась пара (без автозапуска)
+function mountPlayer(vb,side,autoplay){
+ vb.innerHTML=`<iframe src="https://www.youtube.com/embed/${vb.dataset.vid}?autoplay=${autoplay?1:0}&rel=0&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+ const i=vb.querySelector('iframe');
+ i.addEventListener('load',()=>{try{i.contentWindow.postMessage(JSON.stringify({event:'listening',id:side}),'*')}catch(e){}});
+}
 function startVideo(side){
  const vb=$(side?'cardB':'cardA').querySelector('.vbox');if(!vb||!vb.dataset.vid)return;
- yt('pauseVideo',1-side);
- vb.onclick=null;
- vb.innerHTML=`<iframe src="https://www.youtube.com/embed/${vb.dataset.vid}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
- const i=vb.querySelector('iframe');vstate[side]=1;lastSide=side;
- i.addEventListener('load',()=>{try{i.contentWindow.postMessage(JSON.stringify({event:'listening',id:side}),'*')}catch(e){}});
+ yt('pauseVideo',1-side);if(vstate[1-side]===1)vstate[1-side]=2;
+ if(ifr(side))yt('playVideo',side);else mountPlayer(vb,side,true);
+ vstate[side]=1;lastSide=side;
 }
 let lastSide=null;
 function toggleVideo(side){
- if(!ifr(side)){startVideo(side);return}
  if(vstate[side]===1){yt('pauseVideo',side);vstate[side]=2}
- else{yt('pauseVideo',1-side);if(vstate[1-side]===1)vstate[1-side]=2;yt('playVideo',side);vstate[side]=1;lastSide=side}
+ else startVideo(side);
 }
 window.addEventListener('message',e=>{
  if(!/youtube/.test(e.origin))return;
  let d;try{d=typeof e.data==='string'?JSON.parse(e.data):e.data}catch(x){return}
  if(!d||!d.info||d.info.playerState===undefined)return;
- [0,1].forEach(s=>{const i=ifr(s);if(i&&i.contentWindow===e.source){vstate[s]=d.info.playerState===1?1:2;if(d.info.playerState===1)lastSide=s}});
+ [0,1].forEach(s=>{const i=ifr(s);if(i&&i.contentWindow===e.source){
+  if(d.info.playerState===1){if(vstate[1-s]===1||vstate[1-s]===null)yt('pauseVideo',1-s);if(vstate[1-s]===1)vstate[1-s]=2;vstate[s]=1;lastSide=s}
+  else if(d.info.playerState===2||d.info.playerState===0)vstate[s]=2}});
 });
 document.addEventListener('keydown',e=>{
  if(e.ctrlKey||e.altKey||e.metaKey||e.repeat)return;
