@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Битва групп: эмо · скримо · металкор</title>
+<title>Битва групп: русское эмо</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://www.youtube.com">
 <link rel="preconnect" href="https://i.ytimg.com">
@@ -136,8 +136,8 @@ td .tr{opacity:.7;font-size:12px}
 <!-- SETUP -->
 <section id="setup">
  <div class="hero"></div>
- <h1>Битва групп <span>эмо · скримо · металкор</span></h1>
- <p class="sub">Из двух групп выбирай одну — и так до единственной лучшей. В каждой карточке — лучший трек группы. В конце — таблица твоего топа.</p>
+ <h1>Битва групп <span>русское эмо</span></h1>
+ <p class="sub">Русское эмо и всё в этом духе: Оригами, Психея, Jane Air, 6000000000себя, [AMATORY] и вся сцена A-One. Из двух групп выбирай одну — и так до единственной лучшей. В каждой карточке — лучший трек группы.</p>
 
  <div class="panel" id="resumeBox" style="display:none">
   <h3>Незаконченный турнир</h3>
@@ -146,12 +146,7 @@ td .tr{opacity:.7;font-size:12px}
 
  <div class="panel">
   <h3>Какие группы</h3>
-  <div class="chips" id="ccChips">
-   <button class="chip on" data-v="all">Все</button>
-   <button class="chip" data-v="ru">🇷🇺 Русские и СНГ</button>
-   <button class="chip" data-v="foreign">🌍 Зарубежные</button>
-  </div>
-  <div class="chips" id="fameChips" style="margin-top:10px">
+  <div class="chips" id="fameChips">
    <button class="chip on" data-v="all">Любые</button>
    <button class="chip" data-v="hits">Известные</button>
    <button class="chip" data-v="odd">Андеграунд</button>
@@ -202,7 +197,7 @@ td .tr{opacity:.7;font-size:12px}
 <div class="toast" id="toast"></div>
 
 <script>
-const GENRES={emo:'Эмо',scr:'Скримо',phc:'Пост-хардкор',mc:'Металкор',dc:'Дэткор',math:'Маткор',pp:'Поп-панк',alt:'Альтернатива'};
+const GENRES={emo:'Эмо',scr:'Скримо',phc:'Пост-хардкор',pp:'Эмо-поп / поп-панк',alt:'Альтернатива / ню',mc:'Металкор',math:'Маткор',dc:'Дэткор'};
 const CIS=new Set(['ru','ua','by','kz','md']);
 let BANDS=[],VID={};
 async function loadData(){
@@ -235,13 +230,13 @@ let S=null;
 function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function cardBg(g){const h=hash(g.t);const a=h%360,b=(a+40+(h>>9)%80)%360;return `linear-gradient(150deg,hsl(${a} 55% 30%),hsl(${b} 65% 13%))`}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function meta(g){return `${flag(g.cc)} ${GENRES[g.g]||g.g}${g.odd?' · андеграунд':''}`}
+function meta(g){return `${CIS.has(g.cc)?'':flag(g.cc)+' '}${GENRES[g.g]||g.g}${g.odd?' · андеграунд':''}`}
 
 // ---------- setup ----------
-function filtered(){return BANDS.filter(g=>(!opt.onlyVid||g.v)&&opt.genres.has(g.g)&&(opt.cc==='all'||(opt.cc==='ru')===CIS.has(g.cc))&&(opt.fame==='all'||(opt.fame==='hits'?!g.odd:g.odd)))}
+function filtered(){return BANDS.filter(g=>(!opt.onlyVid||g.v)&&opt.genres.has(g.g)&&(opt.fame==='all'||(opt.fame==='hits'?!g.odd:g.odd)))}
 function chipGroup(id,key){document.querySelectorAll(`#${id} .chip`).forEach(b=>b.onclick=()=>{opt[key]=b.dataset.v;document.querySelectorAll(`#${id} .chip`).forEach(x=>x.classList.toggle('on',x===b));renderSizes()})}
 function initSetup(){
- chipGroup('ccChips','cc');chipGroup('fameChips','fame');
+ chipGroup('fameChips','fame');
  const gc=$('genreChips');
  Object.entries(GENRES).forEach(([k,n])=>{const cnt=BANDS.filter(b=>b.g===k).length;if(!cnt)return;const b=document.createElement('button');b.className='chip on';b.textContent=`${n} · ${cnt}`;
   b.onclick=()=>{if(opt.genres.has(k)){if(opt.genres.size>1)opt.genres.delete(k)}else opt.genres.add(k);b.classList.toggle('on',opt.genres.has(k));renderSizes()};gc.appendChild(b)});

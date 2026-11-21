@@ -27,17 +27,20 @@ TRACKS = os.path.join(DATA, "lastfm_tracks.json")
 REPORT = os.path.join(DATA, "lastfm_report.txt")
 
 # тег -> жанр; порядок = приоритет при сборе кандидатов
-RU_TAGS = [("russian emo", "emo"), ("russian post-hardcore", "phc"), ("russian metalcore", "mc"),
-           ("russian screamo", "scr"), ("russian deathcore", "dc"), ("russian mathcore", "math"),
-           ("russian pop-punk", "pp"), ("russian alternative metal", "alt"), ("russian nu metal", "alt"),
-           ("emo russian", "emo")]
-TAGS = [("screamo", "scr"), ("skramz", "scr"), ("emo", "emo"), ("midwest emo", "emo"), ("emocore", "emo"),
-        ("post-hardcore", "phc"), ("metalcore", "mc"), ("melodic metalcore", "mc"), ("deathcore", "dc"),
-        ("mathcore", "math"), ("easycore", "pp"), ("pop punk", "pp"), ("nu metalcore", "mc")]
+# только русская сцена: русское эмо и всё в духе A-One нулевых
+RU_TAGS = [("russian emo", "emo"), ("emo russian", "emo"), ("русское эмо", "emo"), ("эмо", "emo"),
+           ("russian emocore", "emo"), ("russian post-hardcore", "phc"), ("пост-хардкор", "phc"),
+           ("russian screamo", "scr"), ("скримо", "scr"), ("russian pop-punk", "pp"), ("russian pop punk", "pp"),
+           ("поп-панк", "pp"), ("russian alternative", "alt"), ("russian alternative metal", "alt"),
+           ("russian nu metal", "alt"), ("ню-метал", "alt"), ("альтернатива", "alt")]
+TAGS = []
 GENRE_TAGS = {"emo": "emo", "screamo": "scr", "skramz": "scr", "emocore": "emo", "midwest emo": "emo",
               "post-hardcore": "phc", "metalcore": "mc", "melodic metalcore": "mc", "deathcore": "dc",
               "mathcore": "math", "pop punk": "pp", "pop-punk": "pp", "easycore": "pp",
-              "alternative metal": "alt", "nu metal": "alt", "hardcore": "mc", "melodic hardcore": "phc"}
+              "alternative metal": "alt", "nu metal": "alt", "hardcore": "mc", "melodic hardcore": "phc",
+              "эмо": "emo", "русское эмо": "emo", "russian emo": "emo", "скримо": "scr", "пост-хардкор": "phc",
+              "russian post-hardcore": "phc", "поп-панк": "pp", "russian pop-punk": "pp", "ню-метал": "alt",
+              "russian nu metal": "alt", "russian alternative": "alt", "альтернатива": "alt", "металкор": "mc"}
 BAD_TAGS = {"hip-hop", "hip hop", "rap", "emo rap", "trap", "cloud rap", "pop", "electronic", "rnb", "r&b",
             "dance", "edm", "hyperpop", "russian rap", "russian hip-hop", "phonk", "witch house", "k-pop"}
 COUNTRY_TAGS = [("russian", "ru"), ("russia", "ru"), ("ukrainian", "ua"), ("ukraine", "ua"),
@@ -63,6 +66,7 @@ RU_PER_TAG = cfg.get("ru_per_tag", 500)
 RU_MIN = cfg.get("ru_min_listeners", 300)
 MIN = cfg.get("min_listeners", 3000)
 CAPS = cfg.get("caps", {"pp": 200, "alt": 60})
+SKIP_GENRES = set(cfg.get("skip_genres", ["dc"]))
 
 S = requests.Session()
 S.headers.update({"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -237,12 +241,19 @@ with ThreadPoolExecutor(3) as pool:
                 log.append(f"пропуск (не тот жанр: {', '.join(top)}): {c['name']}")
                 continue
             genre = next((GENRE_TAGS[t] for t in tags[:6] if t in GENRE_TAGS), c["genre"])
+            if genre in SKIP_GENRES:
+                rejected += 1
+                log.append(f"пропуск (жанр {genre}): {c['name']}")
+                continue
             cap = CAPS.get(genre)
             if cap is not None and per_genre.get(genre, 0) >= cap:
                 continue
-            cc = country(c["name"], tags, "ru" if c["ru"] else "")
-            if c["ru"] and cc not in ("ru", "ua", "by", "kz", "md"):
-                cc = "ru"
+            cc = country(c["name"], tags, "")
+            if not re.search(r"[а-яё]", c["name"], re.I) and not any(re.search(r"russia|русск", t) for t in tags[:10]):
+                rejected += 1
+                log.append(f"пропуск (не русская группа: {', '.join(top)}): {c['name']}")
+                continue
+            cc = "ru"
             per_genre[genre] = per_genre.get(genre, 0) + 1
             odd = "*" if lis < (20000 if c["ru"] else 100000) else ""
             added.append(f"{c['name'].replace('|', '/')} | {track.replace('|', '/')} | {cc} | {genre} | {odd}".rstrip(" |"))

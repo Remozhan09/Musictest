@@ -1,4 +1,4 @@
-# Русские и СНГ. Формат: Группа | Трек (пусто = найти самый популярный клип) | страна | жанр | * = андеграунд
+# Русское эмо и всё в этом духе (сцена A-One нулевых и эмо-поп). Формат: Группа | Трек (пусто = самый популярный клип) | страна | жанр | * = андеграунд
 # Жанры: emo, scr (скримо), mc (металкор), phc (пост-хардкор), dc (дэткор), math (маткор), pp (поп-панк/эмо-поп), alt (альтернатива/ню)
 Оригами | | ru | emo
 6000000000себя | Тоннель в небо | ru | alt | *
@@ -23,10 +23,7 @@ Optimus Prime | | ru | phc | *
 Линия | | ru | emo | *
 Such a Beautiful Day | | ru | phc | *
 Kambodge | | ru | phc | *
-Rashamba | | ru | mc | *
 Marschak | | ru | scr | *
-The Korea | Полюса | ru | mc
-ReAnima | | ru | mc | *
 Koriza | | ru | phc | *
 Eilean Mòr | | ru | scr | *
 Ad Astra | | ru | phc | *
@@ -35,25 +32,17 @@ Across the Obsession | | ru | phc | *
 FaDING dISTANCE | | ru | phc | *
 Soularise | | ru | phc | *
 Свиньи в космосе | | ru | scr | *
-TENT | | ru | mc | *
-Overbreak | | ru | mc | *
 veresk | | ru | emo | *
-Glory Dies Inside | | ru | mc | *
 Stepward | | ru | phc | *
 Мёртвые дельфины | На моей луне | ru | alt
 Dolphin | Весна | ru | alt
 Wildways | | ru | phc
-Slaughter to Prevail | Demolisher | ru | dc
-Shokran | | ru | math | *
-Siberian Meat Grinder | | ru | mc
-Grenouer | | ru | mc | *
 Пошлая Молли | Самый лучший эмо панк | ru | pp
 Нервы | Батареи | ru | pp
 Три дня дождя | | ru | pp
 МУККА | Девочка с каре | ru | pp
 Френдзона | | ru | pp
 Кис-кис | | ru | pp
-Порнофильмы | Это пройдёт | ru | pp
 Конец фильма | Жёлтые глаза | ru | pp
 Элизиум | | ru | pp | *
 Источник | | ru | emo | *
@@ -63,12 +52,10 @@ My Aprils | | ru | emo | *
 every time she lied | | ru | emo | *
 Кирпичи | | ru | alt | *
 Сегодня ночью | | ru | alt | *
-Пурген | | ru | pp | *
-Тараканы! | | ru | pp
-Наив | | ru | pp | *
 Кукрыниксы | | ru | alt
-Jinjer | Pisces | ua | mc
-Make Me Famous | | ua | mc
-Space of Variations | | ua | mc | *
-Infected Rain | | md | mc
-O.Torvald | | ua | alt | *
+Сметана band | | ru | pp | *
+Мэйби Бэйби | | ru | pp | *
+playingtheangel | | ru | pp | *
+Кошка Сашка | | ru | pp | *
+Flëur | | ru | alt | *
+Anacondaz | | ru | alt

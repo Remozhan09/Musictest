@@ -1,1 +1,1 @@
-{"target_total": 2000, "pages_per_tag": 15, "ru_min_listeners": 300, "min_listeners": 3000, "caps": {"pp": 200, "alt": 60}}
+{"scene": "ru-emo", "target_total": 700, "ru_per_tag": 600, "ru_min_listeners": 300, "caps": {"pp": 150, "alt": 200, "mc": 40}, "skip_genres": ["dc"]}
